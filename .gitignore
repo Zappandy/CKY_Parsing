@@ -1,0 +1,14 @@
+# ignore all .swo files
+*.swo
+
+# ignore all .swp files
+*.swp
+
+# ignore __pycache__
+*.pyc
+
+# ignore all .txt files
+*.txt
+
+# ignore ipython notebook check_points
+.ipynb_checkpoints/
