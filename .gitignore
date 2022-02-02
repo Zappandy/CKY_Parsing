@@ -12,3 +12,6 @@
 
 # ignore ipython notebook check_points
 .ipynb_checkpoints/
+
+#ignore version 1 of file
+cfg_to_cnf.py
