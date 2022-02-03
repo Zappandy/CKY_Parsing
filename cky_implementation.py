@@ -34,6 +34,8 @@ class CKYTable:
                             rules = [self._table[j, k], self._table[k, i]]
                             permutations = [(x, y) for x in rules[0] for y in rules[1]]
                             print(permutations)
+                            for per in permutations:
+                                continue
 
 
 
@@ -80,6 +82,9 @@ def get_flipped_grammar(grammar):
 
 #https://courses.engr.illinois.edu/cs447/fa2018/Slides/Lecture09.pdf
 
+#https://github.com/SouravDutta91/CKY-Recognizer-Parser/blob/master/cky.ipynb
+#https://medium.com/@jeffysam02
+#https://medium.com/@jeffysam02/introduction-to-matplotlib-part-1-8e3848d1c36?source=user_profile---------15-------------------------------
 my_grammar = nltk.data.load("cnf_grammar.cfg")  # nltk.CFG.fromstring
 flipped_grammar = get_flipped_grammar(my_grammar)
 for tup in flipped_grammar.keys():
