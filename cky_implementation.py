@@ -19,18 +19,6 @@ class CKYTable:
         self._table = np.empty((dims, dims), dtype=object)
         fake_table = np.empty((dims, dims), dtype=object)
 
-        #for j in range(dims):
-        #    if sentence[j-1] in self.flipped_grammar.keys():
-        #        self._table[j-1, j] = self.flipped_grammar[sentence[j-1]]
-        #    for i in range(j-2, 0, -1):
-        #        for k in range(i+1, j-1):
-        #            self._table[i, j] ="tito"
-        #            if self._table[i, k] and self._table[k, j]:
-        #                self._table[i, j] ="tito"
-        #                print(k)
-
-
-
         for i in range(1, dims):
             if sentence[i-1] in self.flipped_grammar.keys():
                 self._table[i-1, i] = self.flipped_grammar[sentence[i-1]]
@@ -39,11 +27,31 @@ class CKYTable:
                 #    word = Tree(symbol, list(sentence[i-1]))  # pointer 4 rules?
             for j in range(i-2, -1, -1):  # 0 in notes is inclusive
                 for k in range(j+1, i+j-(i-2)):  #  3 - 1, 4 - 2
-                    if i == 7:
+                    if i == 2:
                         if self._table[j, k] and self._table[k, i]:
-                            self._table[j, k] + self._table[k, i]
-                            self._table[j, i] = self._table[j, k] + self._table[k, i]
+                            print(self._table[j, k])
+                            print(self._table[k, i])
+                            rules = [self._table[j, k], self._table[k, i]]
+                            permutations = [(x, y) for x in rules[0] for y in rules[1]]
+                            print(permutations)
+
+
+
+                            #lengths = OrderedDict()
+                            #lengths = {tuple(self._table[j, k]): len(self._table[j, k]), tuple(self._table[k, i]): len(self._table[k, i])}
+                            #values = tuple(set(lengths.values()))
+                            #print(lengths)
+                            #print(values)
+                            #if len(values) > 1:
+                            #    cycle_rule = rules[0] if values[0] > values[1] else rules[1]
+                            #    non_cycle_rule = rules[0] if values[0] < values[1] else rules[1]
+                            #    print(cycle_rule)
+                            #    print(non_cycle_rule)
+                            #    raise SystemExit
+                            #else:
+                            #    self._table[j, i], *_ = zip(self._table[j, k], self._table[k, i])  # buffer value
         print(self._table)
+        raise SystemExit
         #non_terms = [rule for rule in self.flipped_grammar.keys() if type(rule) is not str]
         #sentence = np.array(sentence)
         #self._table = np.vstack((sentence, self._table[:-1, 1:]))
@@ -61,22 +69,27 @@ def get_flipped_grammar(grammar):
     flipped_grammar = {}
     for rule in rules:
         rhs = rule.rhs()
-        if type(rhs[0]) is str:
+        if type(rhs[0]) is str:  # careful with sets because of different iterations
             flipped_grammar.setdefault(rhs[0], set())
             flipped_grammar[rhs[0]].add(rule.lhs())
         else:
             flipped_grammar.setdefault(rhs, set())
             flipped_grammar[rhs].add(rule.lhs())
-    return {k: tuple(v) for k, v in flipped_grammar.items()}
-    #return flipped_grammar
+    #return {k: tuple(v) for k, v in flipped_grammar.items()}
+    return flipped_grammar
 
 #https://courses.engr.illinois.edu/cs447/fa2018/Slides/Lecture09.pdf
 
 my_grammar = nltk.data.load("cnf_grammar.cfg")  # nltk.CFG.fromstring
-
 flipped_grammar = get_flipped_grammar(my_grammar)
-#x = set(len(testing[k]) for k in testing.keys())
-
+for tup in flipped_grammar.keys():
+    if type(tup) is not str:
+        for i in tup:
+            if i.symbol() == 'VBZ':
+                print(tup)
+                print(flipped_grammar[tup])
+                #raise SystemExit
+print()
 for sent in tokenized_sentences[:1]:
     cky_table = CKYTable(flipped_grammar)
     cky_table.table = sent
