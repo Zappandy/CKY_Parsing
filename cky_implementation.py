@@ -4,6 +4,11 @@ import numpy as np
 from nltk.grammar import Nonterminal
 from nltk.tree import Tree
 # https://parser.kitaev.io/
+class Node:  # for recursive trees
+    def __init__(self, symbol, non_term_1, non_term_2=None):
+        self.symbol = symbol
+        self.non_term_1 = non_term_1
+        self.non_term_2 = non_term_2  # remain as None if non_term_1 is a terminal
 class CKYTable:
     def __init__(self, flip_grammar):
         self.flipped_grammar = flip_grammar
@@ -27,36 +32,20 @@ class CKYTable:
                 #    word = Tree(symbol, list(sentence[i-1]))  # pointer 4 rules?
             for j in range(i-2, -1, -1):  # 0 in notes is inclusive
                 for k in range(j+1, i+j-(i-2)):  #  3 - 1, 4 - 2
-                    if i == 2:
-                        if self._table[j, k] and self._table[k, i]:
-                            print(self._table[j, k])
-                            print(self._table[k, i])
-                            rules = [self._table[j, k], self._table[k, i]]
-                            permutations = [(x, y) for x in rules[0] for y in rules[1]]
-                            print(permutations)
-                            for per in permutations:
-                                continue
+                    if self._table[j, k] and self._table[k, i]:
+                        rules = [self._table[j, k], self._table[k, i]]
+                        permutations = [(x, y) for x in rules[0] for y in rules[1]]
+                        print(permutations)
+                        for per in permutations:
+                            if per in self.flipped_grammar.keys():
+                                print(per)
+                                self._table[j, i] = self.flipped_grammar[per]
+                        print()
 
-
-
-                            #lengths = OrderedDict()
-                            #lengths = {tuple(self._table[j, k]): len(self._table[j, k]), tuple(self._table[k, i]): len(self._table[k, i])}
-                            #values = tuple(set(lengths.values()))
-                            #print(lengths)
-                            #print(values)
-                            #if len(values) > 1:
-                            #    cycle_rule = rules[0] if values[0] > values[1] else rules[1]
-                            #    non_cycle_rule = rules[0] if values[0] < values[1] else rules[1]
-                            #    print(cycle_rule)
-                            #    print(non_cycle_rule)
-                            #    raise SystemExit
-                            #else:
-                            #    self._table[j, i], *_ = zip(self._table[j, k], self._table[k, i])  # buffer value
-        print(self._table)
-        raise SystemExit
-        #non_terms = [rule for rule in self.flipped_grammar.keys() if type(rule) is not str]
         #sentence = np.array(sentence)
         #self._table = np.vstack((sentence, self._table[:-1, 1:]))
+        print(sentence)
+        print(self._table[:-1, 1:])
 
             #for prod in my_grammar.productions():
             #    if sentence[i-1] == prod.rhs()[0]:
@@ -86,16 +75,9 @@ def get_flipped_grammar(grammar):
 #https://medium.com/@jeffysam02
 #https://medium.com/@jeffysam02/introduction-to-matplotlib-part-1-8e3848d1c36?source=user_profile---------15-------------------------------
 my_grammar = nltk.data.load("cnf_grammar.cfg")  # nltk.CFG.fromstring
+print(my_grammar.start())  #print(my_grammar._start)
 flipped_grammar = get_flipped_grammar(my_grammar)
-for tup in flipped_grammar.keys():
-    if type(tup) is not str:
-        for i in tup:
-            if i.symbol() == 'VBZ':
-                print(tup)
-                print(flipped_grammar[tup])
-                #raise SystemExit
-print()
-for sent in tokenized_sentences[:1]:
+for sent in tokenized_sentences[3:4]:  # 2?
     cky_table = CKYTable(flipped_grammar)
     cky_table.table = sent
 
