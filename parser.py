@@ -3,6 +3,7 @@ from nltk import  treetransforms
 from copy import deepcopy
 # https://parser.kitaev.io/
 my_grammar = nltk.data.load("grammar.cfg")  # nltk.CFG.fromstring
+my_grammar = nltk.data.load("ber_grammar.cfg")  # nltk.CFG.fromstring
 #print(my_grammar)  #to viz
 with open("sentences.txt") as file:
     sentences = file.readlines()
@@ -16,7 +17,7 @@ parsed_sentences = [tree for tree in parsed_sentences if bool(tree)]
 good_indexes = tuple(filter(lambda i: i not in bad_indexes, list(range(len(tokenized_sentences)))))
 tokenized_sentences = [tokenized_sentences[i] for i in good_indexes]
 all_parses = []
-for i, sent in enumerate(parsed_sentences):  # 8 changed to S to run. 9, 13, and 14 not running
+for i, sent in enumerate(parsed_sentences):  # 8, 13 and 14 changed to S to run. 9 changed but not running
     parse_count = 0
     for tree in sent:
         print(tree)
