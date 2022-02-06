@@ -30,7 +30,33 @@ class CKYTable:
         dims = len(sentence) + 1
         self._table = np.empty((dims, dims), dtype=object)
 
+
         for i in range(1, dims):
+            if sentence[i-1] in self.flipped_grammar.keys():
+                self._table[i-1, i] = Node(self.flipped_grammar[sentence[i-1]])
+
+        for i in range(1, dims):
+            for j in range(i-2, -1, -1):  # 0 in notes is inclusive
+                #for k in range(j+1, j, -1):  #  works as CKY is supposed to be computed
+                #j - 1, j + 1 if j, k == j - 1, k and if rules are correct
+                for k in range(dims-i):  # This loop works with the given rules
+                    print([j+k, k+1, f"cell to fill in {k}, {k+2}", k+1, i+k])  # to show first loop is the right one
+                    if self._table[j+k, k+1] and self._table[k+1, i+k]:
+                        cells = [self._table[j+k, k+1].rules, self._table[k+1, i+k].rules]
+                        permutations = [(left, right) for left in cells[0] for right in cells[1]]
+                        for per in permutations:
+                            if per in self.flipped_grammar.keys():
+                                self._table[k, k+2] = Node(self.flipped_grammar[per])
+                                #self._table[j, i] = Node(self.flipped_grammar[per])
+
+            self.prettyTable()
+            print(self._table)
+            raise SystemExit
+                    #print([j, k, f"cell to fill in {j}, {i}", k, i])  # to show first loop is the right one
+        raise SystemExit
+
+        for i in range(1, dims):
+            break
             if sentence[i-1] in self.flipped_grammar.keys():
                 self._table[i-1, i] = Node(self.flipped_grammar[sentence[i-1]])
             for j in range(i-2, -1, -1):  # 0 in notes is inclusive
@@ -44,6 +70,8 @@ class CKYTable:
                             if per in self.flipped_grammar.keys():
                                 self._table[j, i] = Node(self.flipped_grammar[per])
                     #print([j, k, f"cell to fill in {j}, {i}", k, i])  # to show first loop is the right one
+
+
                     # shows how weird the rules are with the "right" loop
 
 
