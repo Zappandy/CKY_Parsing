@@ -1,9 +1,9 @@
 import nltk
 from nltk import  treetransforms
 from copy import deepcopy
+from cky_implementation import *
 # https://parser.kitaev.io/
 my_grammar = nltk.data.load("grammar.cfg")  # nltk.CFG.fromstring
-my_grammar = nltk.data.load("ber_grammar.cfg")  # nltk.CFG.fromstring
 #print(my_grammar)  #to viz
 with open("sentences.txt") as file:
     sentences = file.readlines()
@@ -27,10 +27,16 @@ for i, sent in enumerate(parsed_sentences):  # 8, 13 and 14 changed to S to run.
     print("-------------------------------------")
 print(sum(all_parses) / len(parsed_sentences))
 
-#https://github.com/mateusmoury/pln-cky/blob/master/pcfg.py
-#https://python.hotexamples.com/examples/nltk.treetransforms/-/chomsky_normal_form/python-chomsky_normal_form-function-examples.html
-#https://medium.com/swlh/cyk-cky-f63e347cf9b4
-#https://github.com/dj1121/nltk_parsing
 
+my_grammar = nltk.data.load("grammar_cnf.cfg")  # nltk.CFG.fromstring
+my_grammar = nltk.data.load("my_cnf_grammar_cnf.cfg")  # nltk.CFG.fromstring
+#for i, sent in enumerate(tokenized_sentences):  # 2?
+for i, sent in enumerate(tokenized_sentences[:2]):  # 2?
+    cky_table = CKYTable(my_grammar)
+    cky_table.table = sent
+    print(f"{i+1}. {sent}")
+    cky_table.sentenceChecker(sent)
+    #cky_table.sentenceChecker("muscles are key for movement .".split())  # testing that sentences are not in the grammar
+    print(cky_table.backtrack_lis)
+    print()
 
-#https://www.javatpoint.com/automata-chomskys-normal-form
